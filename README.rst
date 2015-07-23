@@ -78,6 +78,7 @@ A message with a link could appear several seconds after a plain text message.
 1. Joe: Hi Fred
 2. Fred: hi joe
 3. Joe: I found some thing interesting
+
 5. Joe: what did you think of it?
 6. Fred: about what?
 7. Joe: the link i sent you
