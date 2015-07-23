@@ -38,9 +38,9 @@ rather than just strings.
 Data models
 -----------
 
-[OK. Now I'm branching out beyond the spec, but this is exactly what I would be doing if I was part
-of the HipChat team. I'm going to spread beyond simple message parsing and
-into data models, architecture, and user experience :)]
+  *OK. Now I'm branching out beyond the spec, but this is exactly what I would be doing if I was part
+  of the HipChat team. I'm going to spread beyond simple message parsing and
+  into data models, architecture, and user experience :)*
 
 Data model first. In a chat application, you would need at least these entities: Conversation,
 User, Message. Basic relationships would be that a Conversation can have multiple participants (Users),
@@ -75,15 +75,17 @@ A naive async implementation might just delay messages with links, sending them 
 information has been gathered. But that would lead to a very odd user experience.
 A message with a link could appear several seconds after a plain text message.
 
-#1 - Joe: Hi Fred
-#2 - Fred: hi joe
-#3 - Joe: I found some thing interesting
-#5 - Joe: what did you think of it?
-#6 - Fred: about what?
-#7 - Joe: the link i sent you
-#8 - Fred: you didn't send me a link
+1. Joe: Hi Fred
+2. Fred: hi joe
+3. Joe: I found some thing interesting
+5. Joe: what did you think of it?
+6. Fred: about what?
+7. Joe: the link i sent you
+8. Fred: you didn't send me a link
+
 [slow message arrives]
-#4 - Joe: check out this link: [nice link with title]
+
+4. Joe: check out this link: [nice link with title]
 
 I would imagine that a strong UX requirement would be that all messages
 from a particular participant in a conversation must be displayed in the order they were sent.
@@ -105,14 +107,15 @@ an updated version of the slow message would be dispatched, with the placeholder
 
 So the user experience would be:
 
-#1 - Joe: Hi Fred
-#2 - Fred: hi joe
-#3 - Joe: I found some thing interesting
-#4 - Joe: check out this link: [raw http link]
-#5 - Joe: what did you think of it?
+1. Joe: Hi Fred
+2. Fred: hi joe
+3. Joe: I found some thing interesting
+4. Joe: check out this link: [raw http link]
+5. Joe: what did you think of it?
 
 [several second later, update to msg #4 arrives. clients now draw]
-#4 - Joe: check out this link: [nice link with title]
+
+4. Joe: check out this link: [nice link with title]
 
 One nice advantage of this is that wrong or dead URLs don't slow down processing at all. For such
 dead links, there is no further information that we can add, so sending out the message with
@@ -129,12 +132,14 @@ have to be diverted to the *same* processing queue.
 
 So the user experience would be:
 
-#1 - Joe: Hi Fred
-#2 - Fred: hi joe
-#3 - Joe: I found some thing interesting
+1. Joe: Hi Fred
+2. Fred: hi joe
+3. Joe: I found some thing interesting
+
 [delay for a few second]
-#4 - Joe: check out this link: [nice link with title]
-#5 - Joe: what did you think of it?
+
+4. Joe: check out this link: [nice link with title]
+5. Joe: what did you think of it?
 
 This is still at the mercy of links that take a long time to retrieve. A very slow or dead site
 could take many seconds to return a response, and all of a users messages to a conversation would
@@ -144,5 +149,3 @@ Decision
 --------
 
 asyncparser is an implementation of Solution #1 -- updating messages.
-
-
