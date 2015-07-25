@@ -86,7 +86,8 @@ class HipChatParser:
         :param d: 
         :return:
         """
-        return json.dumps(d, sort_keys=True, indent=2)
+        s = json.dumps(d, sort_keys=True, indent=2)
+        return s
 
     def _parse_mentions(self, message):
         """
@@ -175,7 +176,7 @@ class NullUrlFetcher:
 
     def get(self, url):
         return ''
-    
+
 def main():
     parser = HipChatParser()
     strings = [

@@ -14,6 +14,8 @@ but as soon as it was used as part of a message pipeline, it's limitations would
 "asyncparser" is closer to something that might be used in production. Please read the following
 discussion before reviewing the code for "asyncparser". I think doing so will make it clearer what
 issues "asyncparser" is try to address (since they are well beyond what was originally spec'd).
+Because of the modular implementation of "hipchatparser", the "asyncparser" can reuse
+the "hipchatparser" class verbatim to achieve its ends.
 
 The problem
 -----------
@@ -150,3 +152,44 @@ Decision
 --------
 
 asyncparser is an implementation of Solution #1 -- updating messages.
+
+Performance considerations
+--------------------------
+
+No performance parameters were specified in the assignment. I would assume that any system
+handling millions of messages would be at least somewhat concerned with performance.
+
+The parser uses regex's as its main engine. Regex's have the advantages of being flexible,
+concise, and usually ease to maintain. They are also general fast "enough". However, for a
+specific problem, it may be possible to write a custom routine that outperformed a regex --
+at the cost of much greater code complexity.
+
+To see if this was possible, I measured the performance of the parser (via performance_tests.py).
+On my mid-range, four year old laptop, the result was:
+
+    10000 messages: 0.534285 seconds
+
+This means the regex approach took about 0.05 milliseconds per message. Hmmm.. that would be
+difficult to beat within Python itself. We could write a specialized extension -- perhaps using
+Cython -- which would probably out perform it, but that would be a significant investment.
+
+As always, performance should be profiled before being optimized. The most significant
+performance cost is not parsing the message -- it is converting the result to JSON.
+Without the JSON conversion, the performance was:
+
+    10000 messages: 0.098521 seconds
+
+The JSON conversion was taking 4 times as long as parsing the message. This, making the parsing faster
+was pointless.
+
+This shows that using JSON as an intermediary format is inefficient (a fact that I suspect you
+already knew).
+
+Security
+--------
+
+The parser is dealing with direct user input, so it would have to wary of malicious input, e.g. an
+injection attack.
+
+The only possible vulnerability would be the url that is passed to `urllib2.urlopen()`, but I think
+that is already proof against malicious input.
