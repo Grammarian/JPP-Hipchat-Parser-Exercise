@@ -160,7 +160,7 @@ No performance parameters were specified in the assignment. I would assume that 
 handling millions of messages would be at least somewhat concerned with performance.
 
 The parser uses regex's as its main engine. Regex's have the advantages of being flexible,
-concise, and usually ease to maintain. They are also general fast "enough". However, for a
+concise, and usually ease to maintain. They are also generally fast "enough". However, for a
 specific problem, it may be possible to write a custom routine that outperformed a regex --
 at the cost of much greater code complexity.
 
@@ -173,14 +173,15 @@ This means the regex approach took about 0.05 milliseconds per message. Hmmm.. t
 difficult to beat within Python itself. We could write a specialized extension -- perhaps using
 Cython -- which would probably out perform it, but that would be a significant investment.
 
-As always, performance should be profiled before being optimized. The most significant
+As always, performance should be profiled before being optimized. Doing that showed a
+surprising (or perhaps not so surprising) result. The most significant
 performance cost is not parsing the message -- it is converting the result to JSON.
 Without the JSON conversion, the performance was:
 
     10000 messages: 0.098521 seconds
 
 The JSON conversion was taking 4 times as long as parsing the message. This, making the parsing faster
-was pointless.
+would be pointless.
 
 This shows that using JSON as an intermediary format is inefficient (a fact that I suspect you
 already knew).
